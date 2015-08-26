@@ -1,9 +1,10 @@
 -module(funcTester).
 -export([performTesting/2]).
 
--record (testedFunction
-		, {description, funcObject}).
+-include("funcTester.hrl").
 
+%runs all tests on a single function and accumulates
+%results in user-friendly format
 funcTester(F, [], _TestNumber, Results) ->
 	printTestResults(F, Results);
 funcTester(F, [SingleTest | Tests], TestNumber, Results) ->
@@ -15,6 +16,7 @@ funcTester(F, [SingleTest | Tests], TestNumber, Results) ->
 	NewResults = getTestResults(RunnerPid, TestNumber, SingleTest, Results),
 	funcTester(F, Tests, TestNumber + 1, NewResults).
 
+%gets results from the spawned function or waits until a timeout expires
 getTestResults(RunnerPid, TestNumber, {Args, Exp}, OldResults) ->
 	receive
 		{testSuccess, RunnerPid, Res} ->
@@ -28,6 +30,7 @@ getTestResults(RunnerPid, TestNumber, {Args, Exp}, OldResults) ->
 			lists:append(OldResults, [io_lib:format("  Test ~B: TIMEOUT, f(~w) = ?, expected ~w~n", [TestNumber, Args, Exp])])
 	end.
 
+%prints test results for a single function to stdout
 printTestResults(F, []) ->
 	io:format("~s: no test results~n", [F#testedFunction.description]);
 printTestResults(F, Results) ->
@@ -40,7 +43,9 @@ printTestResults([H | Results]) ->
 	io:format("~s", [H]),
 	printTestResults(Results).
 
-performSingleTest(Parent, Func, {Args, Expected}) ->
+performSingleTest(Parent, Func, SingleTest) ->
+	Args = SingleTest#singleTest.arguments,
+	Expected = SingleTest#singleTest.expectedValue,
 	Val = apply(Func, Args),
 	if
 		Val =:= Expected ->
@@ -51,6 +56,7 @@ performSingleTest(Parent, Func, {Args, Expected}) ->
 			Parent ! {testFailure, self(), Res}
 	end.
 
+%runs all tests on each function
 performTesting(TestedFuncs, Tests) ->
 	lists:foreach(fun(F) ->
 		funcTester(F, Tests, 1, []) end, TestedFuncs).
