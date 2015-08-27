@@ -17,7 +17,9 @@ funcTester(F, [SingleTest | Tests], TestNumber, Results) ->
 	funcTester(F, Tests, TestNumber + 1, NewResults).
 
 %gets results from the spawned function or waits until a timeout expires
-getTestResults(RunnerPid, TestNumber, {Args, Exp}, OldResults) ->
+getTestResults(RunnerPid, TestNumber, SingleTest, OldResults) ->
+	Args = SingleTest#singleTest.arguments,
+	Exp = SingleTest#singleTest.expectedValue,
 	receive
 		{testSuccess, RunnerPid, Res} ->
 			lists:append(OldResults, [io_lib:format("  Test ~B: ~s~n", [TestNumber, Res])]);

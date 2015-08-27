@@ -15,6 +15,8 @@ last([_ | Tail]) ->
     last(Tail).
 
 p01() ->
+	code:add_path("../funcTester"),
+	code:load_file(funcTester),
 	Funcs = [
 	#testedFunction{description="my tail-recursive version of finding the last element", funcObject=fun last/1}
 	, #testedFunction{description="lists:last", funcObject=fun lists:last/1}
