@@ -22,6 +22,10 @@ p01() ->
 	, #testedFunction{description="lists:last", funcObject=fun lists:last/1}
 	, #testedFunction{description="hd(lists:reverse)", funcObject=fun(X) -> hd(lists:reverse(X)) end}],
 	Tests = [
-	#singleTest{arguments=[[a, b, c, d]], expectedValue=d}],
+	#singleTest{arguments = [[a, b, c, d]], expectedValue = d}
+	, #singleTest{arguments = [[]], expectedValue = error}
+	, #singleTest{arguments = [123], expectedValue = error}
+	, #singleTest{arguments = [[123]], expectedValue = 123}
+	],
 	funcTester:performTesting(Funcs, Tests).
 	
