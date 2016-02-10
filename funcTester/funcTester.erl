@@ -25,12 +25,17 @@ getTestResults(RunnerPid, TestNumber, SingleTest, OldResults) ->
 			lists:append(OldResults, [io_lib:format("  Test ~B: ~s~n", [TestNumber, Res])]);
 		{testFailure, RunnerPid, Res} ->
 			lists:append(OldResults, [io_lib:format("  Test ~B: ~s~n", [TestNumber, Res])]);
-		{'EXIT', RunnerPid, Reason} ->
-			lists:append(OldResults, [io_lib:format("  Test ~B: CRASH with reason ~w~n", [TestNumber, Reason])])
+		{'EXIT', RunnerPid, _Reason} ->
+			processTesterCrash(TestNumber, SingleTest, OldResults)
 	after
 		4000 ->
 			lists:append(OldResults, [io_lib:format("  Test ~B: TIMEOUT, f(~w) = ?, expected ~w~n", [TestNumber, Args, Exp])])
 	end.
+
+processTesterCrash(TestNumber, #singleTest{arguments = Args, expectedValue = error}, OldResults) ->
+	lists:append(OldResults, [io_lib:format("  Test ~B: SUCCESS, f(~w) crashed~n", [TestNumber, lists:flatten(Args)])]);
+processTesterCrash(TestNumber, #singleTest{arguments = Args, expectedValue = _}, OldResults) ->
+	lists:append(OldResults, [io_lib:format("  Test ~B: FAILURE, f(~w) crashed~n", [TestNumber, lists:flatten(Args)])]).
 
 %prints test results for a single function to stdout
 printTestResults(F, []) ->
