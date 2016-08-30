@@ -4,7 +4,7 @@
 %X = d
 
 -module(p01).
--export([p01/0]).
+-export([p/0]).
 
 -include("../funcTester/funcTester.hrl").
 
@@ -14,7 +14,7 @@ last([X]) ->
 last([_ | Tail]) ->
     last(Tail).
 
-p01() ->
+p() ->
 	code:add_path("../funcTester"),
 	code:load_file(funcTester),
 	Funcs = [

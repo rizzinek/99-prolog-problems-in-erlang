@@ -1,5 +1,7 @@
+% (*) Find the last but one element of a list.
+
 -module(p02).
--export([p02/0]).
+-export([p/0]).
 
 -include("../funcTester/funcTester.hrl").
 
@@ -10,7 +12,7 @@ p1([X | [_]]) ->
 p1([_ | Tail]) ->
     p1(Tail).
 
-p02() ->
+p() ->
 	code:add_path("../funcTester"),
 	code:load_file(funcTester),
 	Funcs = [
