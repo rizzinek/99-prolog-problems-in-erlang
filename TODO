@@ -1,0 +1,6 @@
+funcTester
+* time measurements
+* correct printing of arguments. f([a, b, c, d, 3]) is printed instead of f([a, b, c, d], 3)
+
+problems
+* refactor problems p04 and onwards
